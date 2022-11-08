@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: nodeserver
-        image: srs/nodeapp
+        image: public.ecr.aws/x6t9u3w2/srs/nodeapp:latest
         ports:
         - containerPort: 3000
         
