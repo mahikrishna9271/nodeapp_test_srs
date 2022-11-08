@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+     environment {
+    registry = "public.ecr.aws/x6t9u3w2/srs/nodeapp"
+    
+  }
+
+
+    stages {
+        stage('git-checkout') {
+            steps {
+                git 'git@github.com:mahikrishna9271/nodeapp_test_srs.git'
+            }
+        }
+        stage('Build image') {
+            steps{
+                script {
+                       dockerImage = docker.build registry
+                         }
+                    }
+    }
+     stage('git-push') {
+            steps {
+               sh  'aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/x6t9u3w2'
+                sh 'docker push public.ecr.aws/x6t9u3w2/srs/nodeapp:latest'
+            }
+        }
+    stage('deploy-yaml') {
+            steps {
+               sh  'kubectl apply -f deploymentservice.yml --kubeconfig=config'
+            }
+        }
+
+    }
+}
+
